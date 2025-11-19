@@ -139,21 +139,55 @@
       .runner-photo {
         clip-path: polygon(12% 0, 100% 0, 100% 80%, 0 100%, 0 14%);
       }
+
+      @media (max-width: 640px) {
+        body {
+          overflow: auto;
+        }
+
+        main {
+          height: 100dvh;
+          scroll-snap-type: none;
+        }
+
+        section.section-slide {
+          scroll-snap-align: none;
+          padding-top: 1.5rem;
+        }
+
+        .hero-title span:first-child {
+          font-size: 2.2rem;
+        }
+
+        .hero-title span:last-child {
+          font-size: 3rem;
+        }
+
+        .glass {
+          border-radius: 1.25rem;
+        }
+
+        .runner-photo {
+          clip-path: polygon(8% 0, 100% 0, 100% 82%, 0 100%, 0 12%);
+        }
+      }
     </style>
 
     <!-- Iconos Phosphor -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- React + Babel por CDN -->
+    <!-- React (versión de producción) + Babel por CDN -->
     <script
+      defer
       crossorigin
-      src="https://unpkg.com/react@18/umd/react.development.js"
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
     ></script>
     <script
+      defer
       crossorigin
-      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
     ></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script defer src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   </head>
 
   <body class="font-sans antialiased">
@@ -192,12 +226,20 @@
       function App() {
         const activeSection = useActiveSection();
         const [confirmed, setConfirmed] = useState(false);
+        const [showModal, setShowModal] = useState(false);
+
+        const confirmAttendance = () => {
+          setConfirmed(true);
+          setShowModal(true);
+        };
+
+        const closeModal = () => setShowModal(false);
 
         const sectionState = (id) =>
           activeSection === id ? 'section-active' : 'section-inactive';
 
         return (
-          <main className="h-screen overflow-y-auto bg-gradient-to-b from-black via-black to-zinc-950 text-white snap-y snap-mandatory">
+          <main className="h-screen overflow-y-auto bg-gradient-to-b from-black via-black to-zinc-950 text-white snap-y snap-mandatory pb-16 sm:pb-0">
             {/* HERO - Pantalla tipo app de running */}
             <section
               data-section="hero"
@@ -243,7 +285,7 @@
 
               {/* Título + mensaje */}
               <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 text-center gap-6">
-                <p className="uppercase tracking-[0.35em] text-[0.55rem] sm:text-[0.7rem] text-black/70 font-semibold">
+                <p className="uppercase tracking-[0.35em] text-[0.55rem] sm:text-[0.7rem] text-black/70 font-semibold max-w-xl">
                   Cena de cumpleaños del mejor INTEGRANTE DEL CLUB: RFX
                 </p>
 
@@ -416,7 +458,7 @@
                 <div className="flex flex-wrap justify-center gap-4 pt-4">
                   <button
                     className="inline-flex items-center gap-3 rounded-full bg-[var(--run-neon)] text-black px-8 py-3 text-xs sm:text-sm font-semibold uppercase tracking-[0.28em] shadow-[0_18px_40px_rgba(199,255,0,0.45)] hover:translate-y-[1px] active:translate-y-[2px] transition"
-                    onClick={() => setConfirmed(true)}
+                    onClick={confirmAttendance}
                   >
                     <i className="ph ph-check-circle text-xl" aria-hidden="true" />
                     Confirmar asistencia
@@ -428,7 +470,7 @@
                 </div>
 
                 {confirmed && (
-                  <div className="max-w-md mx-auto glass rounded-2xl px-6 py-4 text-sm sm:text-base text-zinc-100">
+                  <div className="max-w-md mx-auto glass rounded-2xl px-6 py-4 text-sm sm:text-base text-zinc-100 shadow-lg">
                     ¡Gracias por confirmar, nos vemos en la cena!
                   </div>
                 )}
@@ -440,6 +482,34 @@
                 Built for Ariel · Running Birthday Dinner Edition
               </p>
             </footer>
+
+            {showModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
+                <div
+                  className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+                  aria-hidden="true"
+                  onClick={closeModal}
+                />
+
+                <div className="relative z-10 max-w-sm w-full glass rounded-3xl px-6 py-7 text-center shadow-[0_20px_60px_rgba(0,0,0,0.75)] border border-[rgba(199,255,0,0.45)]">
+                  <div className="mx-auto mb-4 flex items-center justify-center w-14 h-14 rounded-full bg-[rgba(199,255,0,0.15)] border border-[rgba(199,255,0,0.5)] text-[var(--run-neon)]">
+                    <i className="ph ph-confetti text-3xl" aria-hidden="true" />
+                  </div>
+                  <p className="font-run text-2xl uppercase tracking-[0.2em] mb-2">¡Confirmado!</p>
+                  <p className="text-sm sm:text-base text-zinc-100 mb-5">
+                    Gracias por reservar tu lugar para la cena. Prepárate para brindar con Ariel.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="inline-flex items-center justify-center gap-2 w-full rounded-full bg-[var(--run-neon)] text-black font-semibold uppercase tracking-[0.2em] py-3 shadow-[0_12px_30px_rgba(199,255,0,0.4)] hover:translate-y-[1px] active:translate-y-[2px] transition"
+                  >
+                    <i className="ph ph-check" aria-hidden="true" />
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            )}
           </main>
         );
       }
