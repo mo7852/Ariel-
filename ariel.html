@@ -2,11 +2,11 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Happy Birthday Ariel · Running Invite</title>
+    <title>Happy Birthday Ariel · Runner Dinner</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Invitación de cumpleaños estilo running para celebrar a Ariel, dueño de todos los podios."
+      content="Cena de cumpleaños con vibra running para celebrar a Ariel, dueño de todos los podios."
     />
 
     <!-- Fuentes: script + estilo running -->
@@ -191,6 +191,7 @@
 
       function App() {
         const activeSection = useActiveSection();
+        const [confirmed, setConfirmed] = useState(false);
 
         const sectionState = (id) =>
           activeSection === id ? 'section-active' : 'section-inactive';
@@ -243,7 +244,7 @@
               {/* Título + mensaje */}
               <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 text-center gap-6">
                 <p className="uppercase tracking-[0.35em] text-[0.55rem] sm:text-[0.7rem] text-black/70 font-semibold">
-                  Invitación especial para runners
+                  Cena de cumpleaños con espíritu runner
                 </p>
 
                 <h1 className="hero-title leading-tight">
@@ -256,18 +257,18 @@
                 </h1>
 
                 <p className="max-w-xl text-xs sm:text-sm md:text-base text-black/80 bg-white/70 backdrop-blur-md rounded-full px-6 py-3 shadow-lg">
-                  Te invitamos a celebrar un momento épico junto al dueño de
-                  todos los podios del running.
+                  Te invitamos a una cena épica para celebrar al dueño de todos
+                  los podios del running, sin cronómetro: solo brindis.
                 </p>
 
                 <div className="flex flex-wrap justify-center gap-3 text-[0.65rem] sm:text-xs uppercase tracking-[0.25em]">
                   <span className="inline-flex items-center gap-2 rounded-full bg-black/70 text-[var(--run-neon)] px-4 py-2">
                     <i className="ph ph-lightning text-base" aria-hidden="true" />
-                    Birthday Run
+                    Runner Dinner
                   </span>
                   <span className="inline-flex items-center gap-2 rounded-full bg-white/10 text-white px-4 py-2 border border-white/20">
-                    <i className="ph ph-shoe-prints text-base" aria-hidden="true" />
-                    Solo para runners
+                    <i className="ph ph-sparkle text-base" aria-hidden="true" />
+                    Celebración nocturna
                   </span>
                 </div>
               </div>
@@ -309,9 +310,9 @@
                   </div>
 
                   <p className="text-sm sm:text-base text-zinc-200 mb-6">
-                    Cuando el cronómetro arranca, Ariel no solo corre:
-                    despega. Este es el récord que lo lleva directo a lo más
-                    alto del podio.
+                    Cuando el cronómetro arranca, Ariel no solo corre: despega.
+                    Este es el récord que lo lleva directo a lo más alto del
+                    podio y al centro de nuestra mesa de celebración.
                   </p>
 
                   <div className="grid grid-cols-3 gap-4 mb-6 text-center text-xs sm:text-sm">
@@ -341,9 +342,9 @@
                   </div>
 
                   <p className="text-xs sm:text-sm text-zinc-400">
-                    Este cumpleaños se corre a ritmo de récord. Trae tus
-                    tenis, tu mejor energía y prepárate para celebrar en grande
-                    al rey de los podios.
+                    Este cumpleaños se disfruta a ritmo de récord. Trae tu
+                    mejor anécdota, hambre de celebración y prepárate para la
+                    cena más rápida en llegar al podio.
                   </p>
                 </div>
 
@@ -386,15 +387,15 @@
             >
               <div className="max-w-3xl mx-auto px-6 text-center space-y-8">
                 <p className="uppercase tracking-[0.35em] text-xs text-zinc-500">
-                  Próximo entrenamiento: celebrar
+                  Cena homenaje al rey del ritmo
                 </p>
                 <h2 className="font-run text-3xl sm:text-4xl uppercase tracking-[0.2em]">
-                  ¿Listo para unirte a la carrera?
+                  ¿Listo para tomar asiento en el podio?
                 </h2>
                 <p className="text-sm sm:text-base text-zinc-300 max-w-2xl mx-auto">
-                  Confirma tu asistencia y acompaña a Ariel en este kilómetro
-                  extra de vida, lleno de risas, historias de carreras y buena
-                  energía.
+                  Confirma tu asistencia y acompaña a Ariel en esta noche de
+                  brindis, historias de carreras y sabores pensados para
+                  campeones. Aquí el único sprint es hacia la mesa.
                 </p>
 
                 <div className="flex flex-wrap justify-center gap-4 text-xs sm:text-sm text-zinc-200">
@@ -410,10 +411,17 @@
                     <i className="ph ph-map-pin-line text-lg text-[var(--run-neon)]" aria-hidden="true" />
                     <span>Lugar: Séptimo Brunch &amp; Rooftop</span>
                   </div>
+                  <div className="inline-flex items-center gap-2 bg-black/60 border border-zinc-700 rounded-full px-4 py-2">
+                    <i className="ph ph-t-shirt text-lg text-[var(--run-neon)]" aria-hidden="true" />
+                    <span>Código de vestimenta: Casual Chic</span>
+                  </div>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-4 pt-4">
-                  <button className="inline-flex items-center gap-3 rounded-full bg-[var(--run-neon)] text-black px-8 py-3 text-xs sm:text-sm font-semibold uppercase tracking-[0.28em] shadow-[0_18px_40px_rgba(199,255,0,0.45)] hover:translate-y-[1px] active:translate-y-[2px] transition">
+                  <button
+                    className="inline-flex items-center gap-3 rounded-full bg-[var(--run-neon)] text-black px-8 py-3 text-xs sm:text-sm font-semibold uppercase tracking-[0.28em] shadow-[0_18px_40px_rgba(199,255,0,0.45)] hover:translate-y-[1px] active:translate-y-[2px] transition"
+                    onClick={() => setConfirmed(true)}
+                  >
                     <i className="ph ph-check-circle text-xl" aria-hidden="true" />
                     Confirmar asistencia
                   </button>
@@ -422,12 +430,18 @@
                     Compartir invitación
                   </button>
                 </div>
+
+                {confirmed && (
+                  <div className="max-w-md mx-auto glass rounded-2xl px-6 py-4 text-sm sm:text-base text-zinc-100">
+                    ¡Gracias por confirmar, nos vemos en la cena!
+                  </div>
+                )}
               </div>
             </section>
 
             <footer className="py-8 text-center text-[0.65rem] text-zinc-500 bg-zinc-950">
               <p className="tracking-[0.25em] uppercase">
-                Built for Ariel · Running Birthday Edition
+                Built for Ariel · Running Birthday Dinner Edition
               </p>
             </footer>
           </main>
