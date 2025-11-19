@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Happy Birthday Ariel · Runner Dinner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Cena de cumpleaños con vibra running para celebrar a Ariel, dueño de todos los podios."
+    />
+
+    <!-- Fuentes: script + estilo running -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&family=Teko:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind por CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              runNeon: '#C7FF00',
+              runDark: '#050505',
+            },
+            fontFamily: {
+              script: ['"Pacifico"', 'cursive'],
+              run: ['"Teko"', 'system-ui', 'sans-serif'],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      :root {
+        --run-neon: #c7ff00;
+        --run-dark: #050505;
+      }
+
+      html,
+      body {
+        scroll-behavior: smooth;
+        height: 100%;
+      }
+
+      body {
+        background: radial-gradient(circle at top, #161616 0, #000 55%);
+        color: #f9fafb;
+        overflow: hidden;
+      }
+
+      main {
+        height: 100vh;
+        overflow-y: auto;
+        scroll-snap-type: y mandatory;
+      }
+
+      section.section-slide {
+        min-height: 100vh;
+        scroll-snap-align: start;
+        transition: opacity 700ms ease, transform 700ms ease, filter 700ms ease;
+        opacity: 0;
+        transform: translateY(60px);
+        pointer-events: none;
+        filter: blur(4px);
+      }
+
+      section.section-slide.section-active {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        filter: none;
+      }
+
+      section.section-slide.section-inactive {
+        opacity: 0;
+        transform: translateY(60px);
+        pointer-events: none;
+        filter: blur(4px);
+      }
+
+      /* Forma tipo app de running (triángulo neón) */
+      .hero-mask {
+        clip-path: polygon(0 0, 100% 0, 100% 53%, 50% 76%, 0 53%);
+        background: var(--run-neon);
+      }
+
+      /* Animaciones tipo ejemplo (scroll-timeline) */
+      @keyframes scale-up {
+        to {
+          transform: scale(1.3);
+        }
+      }
+
+      @keyframes fade-away {
+        to {
+          opacity: 0;
+          filter: blur(6px);
+        }
+      }
+
+      @scroll-timeline --hero-scroll {
+        source: auto;
+        orientation: block;
+      }
+
+      .hero-title span:first-child {
+        animation: fade-away both linear;
+        animation-timeline: --hero-scroll;
+        animation-range: exit 20% exit 85%;
+      }
+
+      .hero-title span:last-child {
+        animation:
+          scale-up both ease-in-out,
+          fade-away both linear;
+        animation-timeline: --hero-scroll;
+        animation-range:
+          exit 0% exit 80%,
+          exit 50% exit 95%;
+      }
+
+      /* Secciones que aparecen al hacer scroll */
+      .glass {
+        background: linear-gradient(
+          135deg,
+          rgba(12, 12, 12, 0.9),
+          rgba(0, 0, 0, 0.6)
+        );
+        border: 1px solid rgba(199, 255, 0, 0.35);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8);
+      }
+
+      .runner-photo {
+        clip-path: polygon(12% 0, 100% 0, 100% 80%, 0 100%, 0 14%);
+      }
+    </style>
+
+    <!-- Iconos Phosphor -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- React + Babel por CDN -->
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+
+  <body class="font-sans antialiased">
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useEffect, useState } = React;
+
+      // Hook para controlar qué sección está activa según el scroll
+      function useActiveSection(initialId = 'hero') {
+        const [activeId, setActiveId] = useState(initialId);
+
+        useEffect(() => {
+          const sections = document.querySelectorAll('[data-section]');
+          if (!sections.length) return undefined;
+
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  setActiveId(entry.target.dataset.section);
+                }
+              });
+            },
+            { threshold: 0.6 }
+          );
+
+          sections.forEach((section) => observer.observe(section));
+
+          return () => observer.disconnect();
+        }, []);
+
+        return activeId;
+      }
+
+      function App() {
+        const activeSection = useActiveSection();
+        const [confirmed, setConfirmed] = useState(false);
+
+        const sectionState = (id) =>
+          activeSection === id ? 'section-active' : 'section-inactive';
+
+        return (
+          <main className="h-screen overflow-y-auto bg-gradient-to-b from-black via-black to-zinc-950 text-white snap-y snap-mandatory">
+            {/* HERO - Pantalla tipo app de running */}
+            <section
+              data-section="hero"
+              className={`section-slide ${sectionState('hero')} relative overflow-hidden flex flex-col justify-between`}
+            >
+              <div className="absolute inset-0 bg-black" />
+              <div className="absolute inset-0 hero-mask" />
+
+              {/* Barra superior con métricas simuladas */}
+              <header className="relative z-10 px-6 pt-6 flex justify-between text-xs sm:text-sm font-semibold tracking-[0.15em] text-black/80">
+                <div className="flex items-center gap-1">
+                  <i className="ph ph-gauge text-base sm:text-lg" aria-hidden="true" />
+                  <div className="flex flex-col leading-tight">
+                    <span className="uppercase text-[0.6rem] sm:text-[0.65rem]">
+                      Ritmo
+                    </span>
+                    <span className="text-sm sm:text-base font-bold">
+                      3&apos;58&quot;
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <i className="ph ph-heartbeat text-base sm:text-lg" aria-hidden="true" />
+                  <div className="flex flex-col leading-tight">
+                    <span className="uppercase text-[0.6rem] sm:text-[0.65rem]">
+                      BPM
+                    </span>
+                    <span className="text-sm sm:text-base font-bold">161</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <i className="ph ph-timer text-base sm:text-lg" aria-hidden="true" />
+                  <div className="flex flex-col leading-tight">
+                    <span className="uppercase text-[0.6rem] sm:text-[0.65rem]">
+                      Tiempo
+                    </span>
+                    <span className="text-sm sm:text-base font-bold">
+                      12:29
+                    </span>
+                  </div>
+                </div>
+              </header>
+
+              {/* Título + mensaje */}
+              <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 text-center gap-6">
+                <p className="uppercase tracking-[0.35em] text-[0.55rem] sm:text-[0.7rem] text-black/70 font-semibold">
+                  Cena de cumpleaños del mejor INTEGRANTE DEL CLUB: RFX
+                </p>
+
+                <h1 className="hero-title leading-tight">
+                  <span className="block font-script text-[2.6rem] sm:text-[3.8rem] md:text-[4.4rem] text-black/90 drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)]">
+                    Happy Birthday
+                  </span>
+                  <span className="block mt-3 font-run text-[3.1rem] sm:text-[4.4rem] md:text-[5rem] uppercase tracking-[0.12em] text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.7)]">
+                    Ariel
+                  </span>
+                </h1>
+
+                <p className="max-w-xl text-xs sm:text-sm md:text-base text-black/80 bg-white/70 backdrop-blur-md rounded-full px-6 py-3 shadow-lg">
+                  Te invitamos a una cena épica para celebrar al dueño de todos
+                  los podios del running, sin cronómetro: solo brindis.
+                </p>
+
+                <div className="flex flex-wrap justify-center gap-3 text-[0.65rem] sm:text-xs uppercase tracking-[0.25em]">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-black/70 text-[var(--run-neon)] px-4 py-2">
+                    <i className="ph ph-lightning text-base" aria-hidden="true" />
+                    CLUB RFX
+                  </span>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white/10 text-white px-4 py-2 border border-white/20">
+                    <i className="ph ph-sparkle text-base" aria-hidden="true" />
+                    Runners for X
+                  </span>
+                </div>
+              </div>
+
+              {/* Botón circular tipo play/pause */}
+              <div className="relative z-10 flex justify-center pb-10">
+                <button
+                  type="button"
+                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white flex items-center justify-center shadow-[0_0_0_6px_rgba(0,0,0,0.8)]"
+                  aria-label="Reproducir la invitación de cumpleaños"
+                >
+                  <i className="ph ph-pause text-3xl text-black" aria-hidden="true" />
+                </button>
+              </div>
+
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-black" />
+            </section>
+
+            {/* PERSONAL RECORD */}
+            <section
+              data-section="record"
+              className={`section-slide ${sectionState('record')} bg-black py-16 sm:py-20 flex items-center`}
+            >
+              <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
+                {/* Tarjeta de PR */}
+                <div className="glass rounded-3xl p-7 sm:p-9">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="inline-flex items-center justify-center rounded-2xl bg-[rgba(199,255,0,0.1)] w-10 h-10 border border-[rgba(199,255,0,0.5)]">
+                      <i className="ph ph-trophy text-2xl text-[var(--run-neon)]" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+                        Personal Record
+                      </p>
+                      <h2 className="font-run text-2xl sm:text-3xl tracking-[0.18em] uppercase">
+                        Ariel en modo podio
+                      </h2>
+                    </div>
+                  </div>
+
+                  <p className="text-sm sm:text-base text-zinc-200 mb-6">
+                    Cuando el cronómetro arranca, Ariel no solo corre: PONE EN ALTO AL MEJOR CLUB DE RUNNING: "RFX" .
+                  </p>
+
+                  <div className="grid grid-cols-3 gap-4 mb-6 text-center text-xs sm:text-sm">
+                    <div className="rounded-2xl bg-white/5 border border-white/10 py-4 px-2">
+                      <p className="uppercase tracking-[0.22em] text-zinc-400 mb-1">
+                        Distancia
+                      </p>
+                      <p className="font-run text-2xl sm:text-3xl">3K</p>
+                    </div>
+                    <div className="rounded-2xl bg-white/5 border border-white/10 py-4 px-2">
+                      <p className="uppercase tracking-[0.22em] text-zinc-400 mb-1">
+                        Tiempo
+                      </p>
+                      <p className="font-run text-2xl sm:text-3xl">12:00</p>
+                    </div>
+                    <div className="rounded-2xl bg-[var(--run-neon)] text-black py-4 px-2 shadow-[0_10px_30px_rgba(199,255,0,0.5)]">
+                      <p className="uppercase tracking-[0.22em] text-black/70 mb-1">
+                        Ritmo
+                      </p>
+                      <p className="font-run text-2xl sm:text-3xl">
+                        3.8
+                        <span className="block text-[0.6rem] sm:text-[0.7rem] font-semibold tracking-[0.25em] mt-1">
+                          min / km
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-zinc-400">
+                    Este cumpleaños se disfruta a ritmo de récord. Trae tu
+                    mejor anécdota de Ariel...
+                  </p>
+                </div>
+
+                {/* Foto en el podio */}
+                <div className="relative">
+                  <div className="absolute -inset-0.5 bg-[conic-gradient(from_220deg_at_50%_0%,#C7FF00,transparent_35%,#C7FF00_55%,transparent_75%)] opacity-70 blur-2xl" />
+                  <div className="relative rounded-3xl overflow-hidden bg-zinc-900 border border-zinc-700/80 shadow-[0_18px_60px_rgba(0,0,0,0.9)]">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-zinc-900/20" />
+                    <img
+                      src="https://ariel.franqui.club/4.jpg"
+                      alt="Ariel celebrando en el podio"
+                      className="w-full h-full object-cover runner-photo"
+                      loading="lazy"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between gap-4">
+                      <div>
+                        <p className="text-[0.65rem] uppercase tracking-[0.25em] text-zinc-300">
+                          Dueño de los podios
+                        </p>
+                        <p className="font-script text-xl sm:text-2xl text-[var(--run-neon)]">
+                          Always first.
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 text-[0.65rem] sm:text-xs bg-black/70 rounded-full px-4 py-2 border border-white/10">
+                        <i className="ph ph-map-pin text-base text-[var(--run-neon)]" aria-hidden="true" />
+                        <span className="tracking-[0.18em] uppercase">
+                          Zona de meta
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* CTA / Detalles del evento */}
+            <section
+              data-section="cta"
+              className={`section-slide ${sectionState('cta')} bg-zinc-950 py-16 sm:py-20 border-t border-zinc-900 flex items-center`}
+            >
+              <div className="max-w-3xl mx-auto px-6 text-center space-y-8">
+                <p className="uppercase tracking-[0.35em] text-xs text-zinc-500">
+                  Cena homenaje al rey del ritmo
+                </p>
+                <h2 className="font-run text-3xl sm:text-4xl uppercase tracking-[0.2em]">
+                  ¿Listo para tomar asiento en el podio?
+                </h2>
+                <p className="text-sm sm:text-base text-zinc-300 max-w-2xl mx-auto">
+                  Confirma tu asistencia y acompaña a Ariel en esta noche de
+                  brindis, buenos momentos.
+                </p>
+
+                <div className="flex flex-wrap justify-center gap-4 text-xs sm:text-sm text-zinc-200">
+                  <div className="inline-flex items-center gap-2 bg-black/60 border border-zinc-700 rounded-full px-4 py-2">
+                    <i className="ph ph-calendar-blank text-lg text-[var(--run-neon)]" aria-hidden="true" />
+                    <span>Fecha: Viernes 21</span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 bg-black/60 border border-zinc-700 rounded-full px-4 py-2">
+                    <i className="ph ph-clock text-lg text-[var(--run-neon)]" aria-hidden="true" />
+                    <span>Hora: 7:00 p.m.</span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 bg-black/60 border border-zinc-700 rounded-full px-4 py-2">
+                    <i className="ph ph-map-pin-line text-lg text-[var(--run-neon)]" aria-hidden="true" />
+                    <span>Lugar: Séptimo Brunch &amp; Rooftop</span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 bg-black/60 border border-zinc-700 rounded-full px-4 py-2">
+                    <i className="ph ph-t-shirt text-lg text-[var(--run-neon)]" aria-hidden="true" />
+                    <span>Código de vestimenta: Casual Chic</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-4 pt-4">
+                  <button
+                    className="inline-flex items-center gap-3 rounded-full bg-[var(--run-neon)] text-black px-8 py-3 text-xs sm:text-sm font-semibold uppercase tracking-[0.28em] shadow-[0_18px_40px_rgba(199,255,0,0.45)] hover:translate-y-[1px] active:translate-y-[2px] transition"
+                    onClick={() => setConfirmed(true)}
+                  >
+                    <i className="ph ph-check-circle text-xl" aria-hidden="true" />
+                    Confirmar asistencia
+                  </button>
+                  <button className="inline-flex items-center gap-3 rounded-full bg-transparent border border-zinc-700 text-zinc-200 px-7 py-3 text-xs sm:text-sm font-semibold uppercase tracking-[0.28em] hover:bg-zinc-900 transition">
+                    <i className="ph ph-share-network text-xl" aria-hidden="true" />
+                    Compartir invitación
+                  </button>
+                </div>
+
+                {confirmed && (
+                  <div className="max-w-md mx-auto glass rounded-2xl px-6 py-4 text-sm sm:text-base text-zinc-100">
+                    ¡Gracias por confirmar, nos vemos en la cena!
+                  </div>
+                )}
+              </div>
+            </section>
+
+            <footer className="py-8 text-center text-[0.65rem] text-zinc-500 bg-zinc-950">
+              <p className="tracking-[0.25em] uppercase">
+                Built for Ariel · Running Birthday Dinner Edition
+              </p>
+            </footer>
+          </main>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
