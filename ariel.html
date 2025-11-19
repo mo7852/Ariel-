@@ -45,11 +45,43 @@
       html,
       body {
         scroll-behavior: smooth;
+        height: 100%;
       }
 
       body {
         background: radial-gradient(circle at top, #161616 0, #000 55%);
         color: #f9fafb;
+        overflow: hidden;
+      }
+
+      main {
+        height: 100vh;
+        overflow-y: auto;
+        scroll-snap-type: y mandatory;
+      }
+
+      section.section-slide {
+        min-height: 100vh;
+        scroll-snap-align: start;
+        transition: opacity 700ms ease, transform 700ms ease, filter 700ms ease;
+        opacity: 0;
+        transform: translateY(60px);
+        pointer-events: none;
+        filter: blur(4px);
+      }
+
+      section.section-slide.section-active {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        filter: none;
+      }
+
+      section.section-slide.section-inactive {
+        opacity: 0;
+        transform: translateY(60px);
+        pointer-events: none;
+        filter: blur(4px);
       }
 
       /* Forma tipo app de running (triángulo neón) */
@@ -94,17 +126,6 @@
       }
 
       /* Secciones que aparecen al hacer scroll */
-      .section-fade {
-        opacity: 0;
-        transform: translateY(40px);
-        transition: opacity 800ms ease, transform 800ms ease;
-      }
-
-      .section-fade.is-visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
       .glass {
         background: linear-gradient(
           135deg,
@@ -139,37 +160,48 @@
     <div id="root"></div>
 
     <script type="text/babel">
-      const { useEffect } = React;
+      const { useEffect, useState } = React;
 
-      // Hook para revelar secciones al hacer scroll
-      function useRevealOnScroll() {
+      // Hook para controlar qué sección está activa según el scroll
+      function useActiveSection(initialId = 'hero') {
+        const [activeId, setActiveId] = useState(initialId);
+
         useEffect(() => {
-          const sections = document.querySelectorAll('.section-fade');
+          const sections = document.querySelectorAll('[data-section]');
+          if (!sections.length) return undefined;
 
           const observer = new IntersectionObserver(
             (entries) => {
               entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                  entry.target.classList.add('is-visible');
+                  setActiveId(entry.target.dataset.section);
                 }
               });
             },
-            { threshold: 0.25 }
+            { threshold: 0.6 }
           );
 
-          sections.forEach((sec) => observer.observe(sec));
+          sections.forEach((section) => observer.observe(section));
 
           return () => observer.disconnect();
         }, []);
+
+        return activeId;
       }
 
       function App() {
-        useRevealOnScroll();
+        const activeSection = useActiveSection();
+
+        const sectionState = (id) =>
+          activeSection === id ? 'section-active' : 'section-inactive';
 
         return (
-          <main className="min-h-screen bg-gradient-to-b from-black via-black to-zinc-950 text-white">
+          <main className="h-screen overflow-y-auto bg-gradient-to-b from-black via-black to-zinc-950 text-white snap-y snap-mandatory">
             {/* HERO - Pantalla tipo app de running */}
-            <section className="relative h-screen overflow-hidden flex flex-col justify-between">
+            <section
+              data-section="hero"
+              className={`section-slide ${sectionState('hero')} relative overflow-hidden flex flex-col justify-between`}
+            >
               <div className="absolute inset-0 bg-black" />
               <div className="absolute inset-0 hero-mask" />
 
@@ -255,7 +287,10 @@
             </section>
 
             {/* PERSONAL RECORD */}
-            <section className="section-fade bg-black py-16 sm:py-20">
+            <section
+              data-section="record"
+              className={`section-slide ${sectionState('record')} bg-black py-16 sm:py-20 flex items-center`}
+            >
               <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
                 {/* Tarjeta de PR */}
                 <div className="glass rounded-3xl p-7 sm:p-9">
@@ -345,7 +380,10 @@
             </section>
 
             {/* CTA / Detalles del evento */}
-            <section className="section-fade bg-zinc-950 py-16 sm:py-20 border-t border-zinc-900">
+            <section
+              data-section="cta"
+              className={`section-slide ${sectionState('cta')} bg-zinc-950 py-16 sm:py-20 border-t border-zinc-900 flex items-center`}
+            >
               <div className="max-w-3xl mx-auto px-6 text-center space-y-8">
                 <p className="uppercase tracking-[0.35em] text-xs text-zinc-500">
                   Próximo entrenamiento: celebrar
